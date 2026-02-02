@@ -7,11 +7,14 @@ fn get_data_dir() -> PathBuf {
 }
 
 pub fn save(list: &Todo) -> io::Result<()> {
-    let json = serde_json::to_string(list)?;
-    let file_path = get_data_dir().join(format!("{}.json", list.name()));
+    let dir = get_data_dir();
+    fs::create_dir_all(&dir)?; 
+    let json = serde_json::to_string_pretty(list)?;
+    let file_path = dir.join(format!("{}.json", list.name()));
     fs::write(file_path, json)?;
     Ok(())
 }
+
 
 pub fn load(name: &str) -> io::Result<Todo> {
     let file_path = get_data_dir().join(format!("{}.json", name));
