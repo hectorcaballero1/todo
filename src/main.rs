@@ -1,12 +1,12 @@
-mod todo;
 mod storage;
+mod todo;
 
-use todo::Todo;
 use std::env;
+use todo::Todo;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
-    
+
     if args.len() < 2 {
         println!("Usage:");
         println!("  todo create <name>           Create a spin list");
@@ -40,6 +40,26 @@ fn main() {
             }
             println!("Created list: {}", name);
         }
+
+        "ls" => {
+            let names = match storage::list_all() {
+                Ok(n) => n,
+                Err(e) => {
+                    eprintln!("Error: {}", e);
+                    return;
+                }
+            };
+
+            if names.is_empty() {
+                println!("No lists found");
+            } else {
+                println!("Your lists:");
+                for name in names {
+                    println!("  - {}", name);
+                }
+            }
+        }
+
         _ => {
             let name = &args[1];
 
@@ -66,7 +86,7 @@ fn main() {
                         println!("Usage: todo <name> add <task>");
                         return;
                     }
-                    
+
                     let mut list = match storage::load(name) {
                         Ok(l) => l,
                         Err(e) => {
@@ -74,9 +94,9 @@ fn main() {
                             return;
                         }
                     };
-                    
+
                     list.add(args[3].clone());
-                    
+
                     if let Err(e) = storage::save(&list) {
                         eprintln!("Error: {}", e);
                         return;
@@ -97,12 +117,11 @@ fn main() {
                             println!("> {}", item);
                             if let Err(e) = storage::save(&list) {
                                 eprintln!("Error: {}", e);
-                                return; 
+                                return;
                             }
                         }
                         None => println!("List is empty"),
                     }
-                    
                 }
                 _ => {
                     println!("Unknown command: {}", subcommand);
