@@ -24,6 +24,14 @@ fn main() {
         "ls" => {
             commands::handle_ls();
         }
+
+        "rm" => {
+            if args.len() < 3 {
+                println!("Usage: todo rm <name>");
+                return;
+            }
+            commands::handle_remove(&args[2]);
+        }
         
         _ => {
             let name = &args[1];
@@ -50,7 +58,18 @@ fn main() {
                 "next" => {
                     commands::handle_next(name);
                 }
-                
+
+                "rm" => {
+                    if args.len() < 4 {
+                        println!("Usage: todo <name> rm <index>");
+                        return;
+                    }
+                    match args[3].parse::<usize>() {
+                        Ok(index) => commands::handle_remove_item(name, index),
+                        Err(_) => eprintln!("Error: index must be a number"),
+                    }
+                }
+
                 _ => {
                     eprintln!("Unknown command: {}", args[2]);
                 }

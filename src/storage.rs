@@ -46,3 +46,9 @@ pub fn list_all() -> io::Result<Vec<String>> {
 
     Ok(names)
 }
+
+pub fn delete(name: &str) -> io::Result<()> {
+    let file_path = get_data_dir()?.join(format!("{}.json", name));
+    fs::remove_file(file_path)?;
+    Ok(())
+}

@@ -35,6 +35,24 @@ impl Todo {
         
         Some(item) 
     }
+    
+    pub fn remove(&mut self, index: usize) -> Result<(), String> {
+        if index == 0 || index > self.items.len() {
+            return Err("Index out of range".to_string());
+        }
+
+        let i = index - 1;
+        self.items.remove(i);
+
+        // En los otros casos el current_item no se ve afectado
+        if i < self.current_item {
+            self.current_item -= 1;
+        } else if i == self.current_item && self.current_item >= self.items.len() {
+            self.current_item = 0;
+        }
+
+        Ok(())
+    }
 }
 
 impl fmt::Display for Todo {

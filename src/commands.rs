@@ -75,11 +75,49 @@ pub fn handle_ls() {
     }
 }
 
+pub fn handle_remove(name: &str) {
+    if !storage::exists(name) {
+        eprintln!("Error: List '{}' does not exist", name);
+        return;
+    }
+
+    if let Err(e) = storage::delete(name) {
+        eprintln!("Error: {}", e);
+        return;
+    }
+
+    println!("Deleted list: {}", name);
+}
+
+pub fn handle_remove_item(name: &str, index: usize) {
+    let mut list = match storage::load(name) {
+        Ok(l) => l,
+        Err(e) => {
+            eprintln!("Error: {}", e);
+            return;
+        }
+    };
+
+    if let Err(e) = list.remove(index) {
+        eprintln!("Error: {}", e);
+        return;
+    }
+
+    if let Err(e) = storage::save(&list) {
+        eprintln!("Error: {}", e);
+        return;
+    }
+
+    println!("Item {} removed", index);
+}
+
 pub fn print_usage() {
     println!("Usage:");
-    println!("  todo create <name>       Create a spin list");
-    println!("  todo ls                  List all lists");
-    println!("  todo <name>              Show list");
-    println!("  todo <name> add <task>   Add task");
-    println!("  todo <name> next         Get next task");
+    println!("  todo create <name>          Create a spin list");
+    println!("  todo ls                     List all lists");
+    println!("  todo <name>                 Show list");
+    println!("  todo <name> add <task>      Add task");
+    println!("  todo <name> next            Get next task");
+    println!("  todo rm <name>              Remove list");
+    println!("  todo <name> rm <index>      Remove item by index");
 }
