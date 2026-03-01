@@ -10,8 +10,6 @@ The circular approach helps you rotate through tasks systematically without deci
 
 ## Installation
 ```bash
-git clone <repository_url>
-cd todo
 cargo install --path .
 ```
 
